@@ -44,6 +44,7 @@ function fetchData(){
 
 
 	function onSubmit(e){
+		e.preventDefault()
 		console.log("SUBMIT")
 		fetch('http://localhost:3000/chores', {
 		method: 'POST',
@@ -57,6 +58,26 @@ function fetchData(){
 			duration: document.querySelector('#duration').value
 		})
 	})
+		.then(data => data.json())
+		.then(json => {
+			let choreDiv = document.createElement('div')
+			choreDiv.innerHTML = `<button class="delete-button">X</button>
+			<p>call method to delete</>
+			<h3>${json.title}</h3>
+			<p>${json.duration}</p>
+			<p>${json.priority}</p>`
+			choreDiv.className = 'chore-card'
+			choreDiv.setAttribute("data-id", json.id)
+			choreDiv.querySelector('.delete-button').addEventListener("click", (e) => {
+				console.log("event", e.target.parentElement)
+				e.target.parentElement.remove()
+					let choreID = e.target.parentElement.getAttribute('data-id')
+					console.log("choreID", choreID)
+					fetch(`http://localhost:3000/chores/${choreID}`, {
+				method:"DELETE"})
+			})
+			choreList.appendChild(choreDiv)
+		})
 }
 
 
